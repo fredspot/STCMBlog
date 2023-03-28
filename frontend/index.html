@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog Site</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="#"><img src="images/logo.png" alt="My Blog Site Logo"></a>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Create Article</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="hero">
+            <h1>Welcome to My Blog Site</h1>
+            <p>Read the latest articles from our talented writers</p>
+        </section>
+        <section id="articles">
+            <h2>Latest Articles</h2>
+            <div id="articles-container">
+                <!-- Articles will be dynamically added here -->
+            </div>
+            <div id="pagination-container">
+                <!-- Pagination links will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 My Blog Site</p>
+    </footer>
+    <script src="libs/markdown-it.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

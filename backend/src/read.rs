@@ -12,7 +12,9 @@ pub async fn get_articles() -> HttpResponse {
 }
 
 #[get("/api/articles/{id}")]
-pub async fn get_article(web::Path(id): web::Path<String>) -> HttpResponse {
+pub async fn get_article(path_id: web::Path<String>) -> HttpResponse {
+    let id = path_id.into_inner();
+    
     // Retrieve Article Data from Local File System
     let article = read_article_from_file(&id).await;
 

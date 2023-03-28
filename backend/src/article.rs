@@ -55,6 +55,7 @@ impl PathId for web::Path<(String,)> {
         &self.0
     }
 }
+
 #[post("/api/articles")]
 pub async fn create_article(mut payload: Multipart) -> HttpResponse {
     // Parse Form Data from Request

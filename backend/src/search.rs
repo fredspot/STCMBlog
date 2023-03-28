@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::article::Article;
 
 #[derive(Debug, Deserialize)]
-struct SearchQuery {
+pub struct SearchQuery {
     keyword: Option<String>,
     category: Option<String>,
     tags: Option<String>,
@@ -50,7 +50,7 @@ pub fn filter_articles(mut articles: Vec<Article>, query: &SearchQuery) -> Vec<A
         articles = articles
             .into_iter()
             .filter(|article| {
-                let article_tags: Vec<&str> = article.tags.iter().map(|tag| tag.as_str()).collect();
+                let article_tags: Vec<&str> = article.tags.as_ref().unwrap().iter().map(|tag| tag.as_str()).collect();
                 tags.iter().all(|tag| article_tags.contains(tag))
             })
             .collect();

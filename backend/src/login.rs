@@ -20,7 +20,7 @@ pub struct LoginResponse {
 #[post("/api/login")]
 pub async fn login(data: web::Json<LoginData>) -> HttpResponse {
     // Read Valid Logins from auth.json File
-    let mut file = File::open("auth.json").expect("File not found");
+    let mut file = File::open("data/auth.json").expect("File not found");
     let mut contents = String::new();
     file.read_to_string(&mut contents).expect("Error reading file");
     let valid_logins: Vec<LoginData> = serde_json::from_str(&contents).expect("Error parsing JSON");

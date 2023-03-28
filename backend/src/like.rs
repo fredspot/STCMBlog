@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 use crate::article::Article;
 
 #[post("/api/articles/{id}/like")]
-pub async fn like_article(web::Path(id): web::Path<String>) -> HttpResponse {
+pub async fn like_article(path_id: web::Path<String>) -> HttpResponse {
+    let id = path_id.into_inner();
     // Retrieve Article List from Local File System
     let mut articles = read_articles_from_file().await;
 
@@ -11,16 +12,16 @@ pub async fn like_article(web::Path(id): web::Path<String>) -> HttpResponse {
     if let Some(article) = articles.iter_mut().find(|article| article.id == id) {
         // Increment Article Like Count
         article.likes += 1;
-
-        // Write Updated Article List to Local File System
-        write_articles_to_file(&articles).await;
-        
-        // Return Updated Article as JSON
-        return HttpResponse::Ok().json(article);
+    } else {
+        // Return 404 Not Found Error if Article ID Not Found
+        return HttpResponse::NotFound().finish();
     }
 
-    // Return 404 Not Found Error if Article ID Not Found
-    HttpResponse::NotFound().finish()
+    // Write Updated Article List to Local File System
+    write_articles_to_file(&articles).await;
+
+    // Return Updated Article as JSON
+    HttpResponse::Ok().json(articles)
 }
 
 pub async fn read_articles_from_file() -> Vec<Article> {

@@ -1,0 +1,22 @@
+[
+    {
+        "id": "1",
+        "author": "Gok",
+        "created": "3/29/2023",
+        "title": "The Benefits of Regular Exercise",
+        "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "category": "Health",
+        "tags": ["Exercise", "Fitness", "Health"],
+        "likes": 10
+    },
+    {
+        "id": "2",
+        "author": "Gok",
+        "created": "3/29/2023",
+        "title": "The Benefits of Regular Exercise",
+        "content": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "category": "Health",
+        "tags": ["Exercise", "Fitness", "Health"],
+        "likes": 10
+    }
+]

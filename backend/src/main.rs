@@ -1,32 +1,17 @@
-use actix_web::{web, App, HttpServer};
+use actix_web::{web, App, HttpServer, Responder};
+use actix_files::Files;
 
 mod article;
-mod login;
-mod read;
-mod search;
-mod like;
-mod share;
 
-#[tokio::main]
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // Set up HTTP server
-    let server = HttpServer::new(|| {
+    HttpServer::new(|| {
         App::new()
-            .service(article::get_articles)
-            .service(article::get_article)
-            .service(article::create_article)
-            .service(article::update_article)
-            .service(article::delete_article)
-            .service(login::login)
-            .service(read::get_article)
-            .service(search::search_articles)
-            .service(like::like_article)
-            .service(share::share_article)
+            // prefixes all resources and routes attached to it...
+            // ...so this handles requests for `GET /app/index.html`
+            .service(Files::new("/", "../frontend").index_file("index.html"))
     })
-    .bind("127.0.0.1:8080")?;
-
-    println!("Server running at http://127.0.0.1:8080");
-
-    // Run server
-    server.run().await
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }

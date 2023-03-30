@@ -104,7 +104,7 @@ mod tests {
     async fn test_files_service() {
         let mut app = test::init_service(
             App::new()
-                .service(actix_files::Files::new("/src", "./frontend/public/src").show_files_listing())
+                .service(actix_files::Files::new("/src", "./frontend/src").show_files_listing())
         ).await;
 
         let req = test::TestRequest::get().uri("/src").to_request();

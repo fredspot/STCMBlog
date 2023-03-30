@@ -18,6 +18,7 @@ async fn main() -> std::io::Result<()> {
                     http::header::CONTENT_TYPE,
                 ]))
             .wrap(middleware::Logger::default())
+        .service(article::get_latest_ids)
         .service(article::get_article)
         .service(article::get_articles)
     })

@@ -21,6 +21,7 @@ async fn main() -> std::io::Result<()> {
         .service(article::get_latest_ids)
         .service(article::get_article)
         .service(article::get_articles)
+        .service(article::create_article)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

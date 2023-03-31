@@ -1,10 +1,11 @@
 use actix_multipart::Multipart;
-use actix_web::{delete, get, post, put, web, HttpResponse};
+use actix_web::{delete, get, post, put, web, http, HttpResponse, Responder};
 use futures_util::{StreamExt, TryStreamExt};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::prelude::*;
 use uuid::Uuid; // Create id of the article
+use serde_json::json;
 
 // Article Struct
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -24,19 +25,21 @@ pub struct LatestParams {
     count: Option<usize>,
 }
 
-pub async fn retrieve_latest_ids(count: usize) -> Vec<String> {
-    // Read Articles Data from JSON File
-    let data = tokio::fs::read_to_string("./data/articles.json")
-        .await
-        .unwrap_or_default();
-    let mut articles: Vec<Article> = serde_json::from_str(&data).unwrap_or_default();
-
-    // Sort Articles by Created Date (latest first) and extract the IDs
-    articles.sort_by_key(|article| chrono::DateTime::parse_from_rfc3339(&article.created).unwrap());
-    let latest_ids = articles.iter().rev().take(count).map(|article| article.id.clone()).collect();
-
-    // Return Latest IDs
-    latest_ids
+#[post("/api/create_article")]
+pub async fn create_article(payload: web::Json<Article>) -> impl Responder {
+    let mut article = payload.into_inner();
+    // Set the ID and created timestamp for the new article
+    article.id = Uuid::new_v4().to_string();
+    article.created = chrono::Utc::now().to_rfc3339();
+    // Save the article to the "articles.json" file
+    let mut articles: Vec<Article> = match File::open("articles.json") {
+        Ok(file) => serde_json::from_reader(file).unwrap_or_else(|_| vec![]),
+        Err(_) => vec![],
+    };
+    articles.push(article.clone());
+    let file = File::create("articles.json").unwrap();
+    serde_json::to_writer(file, &articles).unwrap();
+    HttpResponse::Created().json(article)
 }
 
 #[get("/api/articles/latest")]
@@ -70,6 +73,21 @@ pub async fn get_article(path_id: web::Path<String>) -> HttpResponse {
     } else {
         HttpResponse::NotFound().body("Article not found")
     }
+}
+
+pub async fn retrieve_latest_ids(count: usize) -> Vec<String> {
+    // Read Articles Data from JSON File
+    let data = tokio::fs::read_to_string("./data/articles.json")
+        .await
+        .unwrap_or_default();
+    let mut articles: Vec<Article> = serde_json::from_str(&data).unwrap_or_default();
+
+    // Sort Articles by Created Date (latest first) and extract the IDs
+    articles.sort_by_key(|article| chrono::DateTime::parse_from_rfc3339(&article.created).unwrap());
+    let latest_ids = articles.iter().rev().take(count).map(|article| article.id.clone()).collect();
+
+    // Return Latest IDs
+    latest_ids
 }
 
 pub async fn read_articles_from_file() -> Vec<Article> {
@@ -106,9 +124,46 @@ mod tests {
     use super::*;
     use std::fs::File;
     use std::io::prelude::*;
-    use actix_web::{test, App};
+    use actix_web::{test, App, http::StatusCode};
     use chrono::Utc;
     use tempfile::tempdir;
+    use actix_web::test::{init_service, TestRequest};
+
+    #[actix_rt::test]
+    async fn test_create_article() {
+        let app = App::new().service(create_article);
+        let mut app = init_service(app).await;
+
+        let new_article = Article {
+            id: "".to_string(),
+            author: "John Doe".to_string(),
+            created: "".to_string(),
+            title: "Test Article".to_string(),
+            content: "This is a test article.".to_string(),
+            category: "Test".to_string(),
+            tags: vec!["testing".to_string()],
+            likes: 0,
+        };
+
+        let response = TestRequest::post()
+            .uri("/api/create_article")
+            .set_json(&new_article)
+            .send_request(&mut app)
+            .await;
+
+        assert_eq!(response.status(), StatusCode::CREATED);
+
+        let created_article: Article = test::read_body_json(response).await;
+        
+        assert_eq!(created_article.author, new_article.author);
+        assert_eq!(created_article.title, new_article.title);
+        assert_eq!(created_article.content, new_article.content);
+        assert_eq!(created_article.category, new_article.category);
+        assert_eq!(created_article.tags, new_article.tags);
+        assert_eq!(created_article.likes, new_article.likes);
+        assert_ne!(created_article.id, new_article.id);
+        assert_ne!(created_article.created, new_article.created);
+    }
 
     #[actix_rt::test]
     async fn test_get_latest_ids_api() {

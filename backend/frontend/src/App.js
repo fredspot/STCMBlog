@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 import Article from './Article';
+import CreateArticle from './CreateArticle';
+import NavBar from './NavBar'; // Add this import
 
 const App = () => {
   const [latestIds, setLatestIds] = useState([]);
@@ -14,13 +17,19 @@ const App = () => {
   }, []);
 
   return (
-    <div>
-      <div className="main-content">
-        {latestIds.map(id => (
-          <Article key={id} id={id} />
-        ))}
+    <Router>
+      <NavBar /> {/* Add the Navbar component */}
+      <div>
+        {/* The existing navigation links are already present in the index.html file, so you don't need to repeat them here. */}
+        <div className="main-content">
+          <Routes>
+            <Route path="/" element={<div>{latestIds.map(id => <Article key={id} id={id} />)}</div>} />
+            <Route path="/article/:id" element={<Article />} />
+            <Route path="/create-article" element={<CreateArticle />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 };
 

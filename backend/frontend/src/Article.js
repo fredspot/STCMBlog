@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 
-const Article = ({ id }) => {
+const Article = () => {
   const [article, setArticle] = useState(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchArticle = async () => {

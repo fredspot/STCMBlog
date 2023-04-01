@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 
-const Article = () => {
+const Article = ({ id }) => {
   const [article, setArticle] = useState(null);
-  const { id } = useParams();
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -26,10 +25,13 @@ const Article = () => {
         <p>Written by {article.author} on {article.created.substring(0, 10)}</p>
         <hr />
         <ReactMarkdown
-          renderers={{
-            heading: ({ level, children }) => (
-              React.createElement(`h${level}`, { style: { fontWeight: 'bold' } }, children)
-            ),
+          components={{
+            h1: ({ children }) => <h1 style={{ fontWeight: 'bold' }}>{children}</h1>,
+            h2: ({ children }) => <h2 style={{ fontWeight: 'bold' }}>{children}</h2>,
+            h3: ({ children }) => <h3 style={{ fontWeight: 'bold' }}>{children}</h3>,
+            h4: ({ children }) => <h4 style={{ fontWeight: 'bold' }}>{children}</h4>,
+            h5: ({ children }) => <h5 style={{ fontWeight: 'bold' }}>{children}</h5>,
+            h6: ({ children }) => <h6 style={{ fontWeight: 'bold' }}>{children}</h6>,
           }}
         >
           {article.content}

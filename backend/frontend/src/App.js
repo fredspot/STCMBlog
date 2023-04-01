@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Routes, Outlet } from 'react-router-dom';
 import Article from './Article';
 import CreateArticle from './CreateArticle';
 import NavBar from './NavBar'; // Add this import
+import { useParams } from 'react-router-dom';
 
 const App = () => {
   const [latestIds, setLatestIds] = useState([]);
+  const ArticleWrapper = () => {
+    const { id } = useParams();
+    return <Article id={id} />;
+  };
 
   useEffect(() => {
     const fetchLatestIds = async () => {
@@ -24,7 +29,7 @@ const App = () => {
         <div className="main-content">
           <Routes>
             <Route path="/" element={<div>{latestIds.map(id => <Article key={id} id={id} />)}</div>} />
-            <Route path="/article/:id" element={<Article />} />
+            <Route path="/article/:id" element={<ArticleWrapper />} />
             <Route path="/create-article" element={<CreateArticle />} />
           </Routes>
         </div>

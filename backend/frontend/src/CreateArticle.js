@@ -5,21 +5,30 @@ const CreateArticle = (props) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
+  const [category, setCategory] = useState('Investing'); // Set the default category to Investing
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch('http://localhost:8080/api/articles', {
+    const response = await fetch('http://localhost:8080/api/create_article', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ title, content, tags }),
+      body: JSON.stringify({
+        title,
+        content,
+        author: "Your Author Name", // Add this line
+        category, // Add this line
+        tags: tags.split(',').map((tag) => tag.trim()).join(','), // Convert the tags to a comma-separated string
+        likes: 0, // Add this line
+      }),
     });
-
+  
     if (response.ok) {
       props.history.push('/');
     }
   };
-
+  
   return (
     <div className="container">
       <div className="row justify-content-center">
@@ -53,6 +62,23 @@ const CreateArticle = (props) => {
                     onChange={(e) => setContent(e.target.value)}
                     required
                   ></textarea>
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="category" className="form-label">
+                    Category
+                  </label>
+                  <select
+                    className="form-select"
+                    id="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    required
+                  >
+                    <option value="Investing">Investing</option>
+                    <option value="Macro">Macro</option>
+                    <option value="DD">DD</option>
+                    <option value="Misc">Misc</option>
+                  </select>
                 </div>
                 <div className="mb-3">
                     <label htmlFor="tags" className="form-label">

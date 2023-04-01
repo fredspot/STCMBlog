@@ -8,6 +8,7 @@ use uuid::Uuid; // Create id of the article
 use serde_json::json;
 
 // Article Struct
+// Article Struct
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Article {
     pub id: String,
@@ -16,7 +17,7 @@ pub struct Article {
     pub title: String,
     pub content: String,
     pub category: String,
-    pub tags: Vec<String>,
+    pub tags: Option<Vec<String>>,
     pub likes: u32,
 }
 
@@ -25,19 +26,37 @@ pub struct LatestParams {
     count: Option<usize>,
 }
 
+use serde_json::Value;
+
 #[post("/api/create_article")]
-pub async fn create_article(payload: web::Json<Article>) -> impl Responder {
-    let mut article = payload.into_inner();
-    // Set the ID and created timestamp for the new article
-    article.id = Uuid::new_v4().to_string();
-    article.created = chrono::Utc::now().to_rfc3339();
+pub async fn create_article(payload: web::Json<Value>) -> impl Responder {
+    let title = payload["title"].as_str().unwrap();
+    let content = payload["content"].as_str().unwrap();
+    let author = payload["author"].as_str().unwrap();
+    let category = payload["category"].as_str().unwrap();
+    let tags_str = payload["tags"].as_str().unwrap();
+    let likes = payload["likes"].as_u64().unwrap();
+
+    let tags: Vec<String> = tags_str.split(',').map(|tag| tag.trim().to_string()).collect();
+
+    let article = Article {
+        id: Uuid::new_v4().to_string(),
+        author: author.to_string(),
+        created: chrono::Utc::now().to_rfc3339(),
+        title: title.to_string(),
+        content: content.to_string(),
+        category: category.to_string(),
+        tags: Some(tags),
+        likes: likes as u32,
+    };
+
     // Save the article to the "articles.json" file
-    let mut articles: Vec<Article> = match File::open("articles.json") {
+    let mut articles: Vec<Article> = match File::open("./data/articles.json") {
         Ok(file) => serde_json::from_reader(file).unwrap_or_else(|_| vec![]),
         Err(_) => vec![],
     };
     articles.push(article.clone());
-    let file = File::create("articles.json").unwrap();
+    let file = File::create("./data/articles.json").unwrap();
     serde_json::to_writer(file, &articles).unwrap();
     HttpResponse::Created().json(article)
 }
@@ -106,14 +125,11 @@ pub async fn read_article_from_file(id: &str) -> Option<Article> {
     let data = tokio::fs::read_to_string("./data/articles.json")
         .await
         .unwrap_or_default();
-    println!("Data: {:?}", data);
 
     let articles: Vec<Article> = serde_json::from_str(&data).unwrap_or_default();
-    println!("Articles: {:?}", articles);
 
     // Find Article with Matching ID
     let article = articles.into_iter().find(|article| article.id == id);
-    println!("Article: {:?}", article);
 
     // Return Article or None
     article

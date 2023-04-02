@@ -10,10 +10,6 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  console.log('Component AuthContext:', AuthContext);
-  console.log('Component authContext:', { isLoggedIn, setIsLoggedIn });
-  
-
   useEffect(() => {
     if (showPopup) {
       const timer = setTimeout(() => {

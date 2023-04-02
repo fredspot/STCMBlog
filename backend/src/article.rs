@@ -6,8 +6,8 @@ use std::fs::File;
 use std::io::prelude::*;
 use uuid::Uuid; // Create id of the article
 use serde_json::json;
+use serde_json::Value;
 
-// Article Struct
 // Article Struct
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Article {
@@ -18,7 +18,6 @@ pub struct Article {
     pub content: String,
     pub category: String,
     pub tags: Option<Vec<String>>,
-    pub likes: u32,
 }
 
 #[derive(Deserialize)]
@@ -26,7 +25,58 @@ pub struct LatestParams {
     count: Option<usize>,
 }
 
-use serde_json::Value;
+#[delete("/api/articles/{id}")]
+pub async fn delete_article(path_id: web::Path<String>) -> HttpResponse {
+    let id = path_id.into_inner();
+
+    let mut articles = read_articles_from_file().await;
+    let original_len = articles.len();
+
+    articles.retain(|article| article.id != id);
+    if original_len == articles.len() {
+        return HttpResponse::NotFound().body("Article not found");
+    }
+
+    let file = File::create("./data/articles.json").unwrap();
+    serde_json::to_writer(file, &articles).unwrap();
+
+    HttpResponse::Ok().body("Article deleted")
+}
+
+#[put("/api/articles/{id}")]
+pub async fn update_article(path_id: web::Path<String>, payload: web::Json<Value>) -> HttpResponse {
+    let id = path_id.into_inner();
+
+    let mut articles = read_articles_from_file().await;
+    let index = articles.iter().position(|article| article.id == id);
+
+    if let Some(index) = index {
+        let mut updated_article = articles[index].clone();
+
+        if let Some(title) = payload["title"].as_str() {
+            updated_article.title = title.to_string();
+        }
+        if let Some(content) = payload["content"].as_str() {
+            updated_article.content = content.to_string();
+        }
+        if let Some(category) = payload["category"].as_str() {
+            updated_article.category = category.to_string();
+        }
+        if let Some(tags_str) = payload["tags"].as_str() {
+            let tags: Vec<String> = tags_str.split(',').map(|tag| tag.trim().to_string()).collect();
+            updated_article.tags = Some(tags);
+        }
+
+        articles[index] = updated_article.clone();
+
+        let file = File::create("./data/articles.json").unwrap();
+        serde_json::to_writer(file, &articles).unwrap();
+
+        HttpResponse::Ok().json(updated_article)
+    } else {
+        HttpResponse::NotFound().body("Article not found")
+    }
+}
 
 #[post("/api/create_article")]
 pub async fn create_article(payload: web::Json<Value>) -> impl Responder {
@@ -35,7 +85,6 @@ pub async fn create_article(payload: web::Json<Value>) -> impl Responder {
     let author = payload["author"].as_str().unwrap();
     let category = payload["category"].as_str().unwrap();
     let tags_str = payload["tags"].as_str().unwrap();
-    let likes = payload["likes"].as_u64().unwrap();
 
     let tags: Vec<String> = tags_str.split(',').map(|tag| tag.trim().to_string()).collect();
 
@@ -47,7 +96,6 @@ pub async fn create_article(payload: web::Json<Value>) -> impl Responder {
         content: content.to_string(),
         category: category.to_string(),
         tags: Some(tags),
-        likes: likes as u32,
     };
 
     // Save the article to the "articles.json" file

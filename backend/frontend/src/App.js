@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import Article from './Article';
 import CreateArticle from './CreateArticle';
+import EditArticle from './EditArticle';
 import NavBar from './NavBar';
 import Login from './Login';
 import { useParams } from 'react-router-dom';
@@ -11,6 +12,11 @@ const App = () => {
   const ArticleWrapper = () => {
     const { id } = useParams();
     return <Article id={id} />;
+  };
+
+  const EditArticleWrapper = () => {
+    const { id } = useParams();
+    return <EditArticle id={id} />;
   };
 
   useEffect(() => {
@@ -27,12 +33,13 @@ const App = () => {
       <NavBar />
       <div>
         <div className="main-content">
-          <Routes>
-            <Route path="/" element={<div>{latestIds.map(id => <Article key={id} id={id} />)}</div>} />
-            <Route path="/article/:id" element={<ArticleWrapper />} />
-            <Route path="/create-article" element={<CreateArticle />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
+        <Routes>
+          <Route path="/" element={<div>{latestIds.map(id => <Article key={id} id={id} />)}</div>} />
+          <Route path="/article/:id" element={<ArticleWrapper />} />
+          <Route path="/create-article" element={<CreateArticle />} />
+          <Route path="/edit-article/:id" element={<EditArticleWrapper />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
         </div>
       </div>
     </>

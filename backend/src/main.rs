@@ -23,6 +23,8 @@ async fn main() -> std::io::Result<()> {
         .service(article::get_article)
         .service(article::get_articles)
         .service(article::create_article)
+        .service(article::update_article)
+        .service(article::delete_article)
         .service(login::login)
     })
     .bind(("127.0.0.1", 8080))?

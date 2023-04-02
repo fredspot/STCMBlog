@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { withRouter, useNavigate  } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
+import { AuthContext } from './AuthProvider';
 
-const Article = ({ id }) => {
+const Article = ({ id, history }) => {
   const [article, setArticle] = useState(null);
+  const { username } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -13,6 +16,17 @@ const Article = ({ id }) => {
     };
     fetchArticle();
   }, [id]);
+
+  const handleEdit = () => {
+    navigate(`/edit-article/${id}`);
+  };
+
+  const handleDelete = async () => {
+    await fetch(`http://localhost:8080/api/articles/${id}`, {
+      method: 'DELETE',
+    });
+    navigate('/');
+  };
 
   if (!article) {
     return <div>Loading...</div>;
@@ -29,9 +43,12 @@ const Article = ({ id }) => {
             <div key={index} style={{ fontSize: '14px', backgroundColor: '#f3f3f3', borderRadius: '4px', padding: '4px 8px', marginRight: '6px' }}>{tag}</div>
           ))}
         </div>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: '20px' }}>
-          <div style={{ fontSize: '18px', fontWeight: 'bold', marginRight: '10px' }}>Likes: {article.likes}</div>
-        </div>
+        {article.author === username && (
+          <div>
+            <button onClick={handleEdit}>Edit</button>
+            <button onClick={handleDelete}>Delete</button>
+          </div>
+        )}
         <hr style={{ marginBottom: '20px' }} />
         <ReactMarkdown
           components={{
@@ -54,7 +71,6 @@ const Article = ({ id }) => {
                 <div key={index} style={{ fontSize: '14px', backgroundColor: '#f3f3f3', borderRadius: '4px', padding: '4px 8px', marginRight: '6px' }}>{tag}</div>
               ))}
             </div>
-            <div style={{ fontSize: '18px', fontWeight: 'bold' }}>Likes: {article.likes}</div>
           </div>
         </div>
       </div>

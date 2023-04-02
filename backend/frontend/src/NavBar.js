@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
+import { AuthContext } from './AuthProvider';
 
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const { isLoggedIn, setIsLoggedIn} = useContext(AuthContext);
+  
   useEffect(() => {
     const closeMenu = () => {
       setMenuOpen(false);
@@ -19,6 +21,10 @@ const NavBar = () => {
       document.removeEventListener('click', closeMenu);
     };
   }, [menuOpen]);
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+  };
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark large-navbar">
@@ -45,9 +51,15 @@ const NavBar = () => {
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="#" exact>
-                  Link
-                </NavLink>
+                {isLoggedIn ? (
+                  <NavLink className="nav-link" to="/" onClick={handleLogout} exact>
+                    Logout
+                  </NavLink>
+                ) : (
+                  <NavLink className="nav-link" to="/login" exact>
+                    Login
+                  </NavLink>
+                )}
               </li>
             </ul>
           </div>

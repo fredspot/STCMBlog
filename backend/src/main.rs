@@ -3,6 +3,7 @@ use actix_files::Files;
 use std::fs;
 use actix_files::NamedFile;
 mod article;
+mod login;
 use actix_cors::Cors;
 
 #[actix_rt::main]
@@ -22,6 +23,7 @@ async fn main() -> std::io::Result<()> {
         .service(article::get_article)
         .service(article::get_articles)
         .service(article::create_article)
+        .service(login::login)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

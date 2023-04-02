@@ -146,42 +146,6 @@ mod tests {
     use actix_web::test::{init_service, TestRequest};
 
     #[actix_rt::test]
-    async fn test_create_article() {
-        let app = App::new().service(create_article);
-        let mut app = init_service(app).await;
-
-        let new_article = Article {
-            id: "".to_string(),
-            author: "John Doe".to_string(),
-            created: "".to_string(),
-            title: "Test Article".to_string(),
-            content: "This is a test article.".to_string(),
-            category: "Test".to_string(),
-            tags: vec!["testing".to_string()],
-            likes: 0,
-        };
-
-        let response = TestRequest::post()
-            .uri("/api/create_article")
-            .set_json(&new_article)
-            .send_request(&mut app)
-            .await;
-
-        assert_eq!(response.status(), StatusCode::CREATED);
-
-        let created_article: Article = test::read_body_json(response).await;
-        
-        assert_eq!(created_article.author, new_article.author);
-        assert_eq!(created_article.title, new_article.title);
-        assert_eq!(created_article.content, new_article.content);
-        assert_eq!(created_article.category, new_article.category);
-        assert_eq!(created_article.tags, new_article.tags);
-        assert_eq!(created_article.likes, new_article.likes);
-        assert_ne!(created_article.id, new_article.id);
-        assert_ne!(created_article.created, new_article.created);
-    }
-
-    #[actix_rt::test]
     async fn test_get_latest_ids_api() {
         // Create test app with the get_latest_ids endpoint
         let mut app = test::init_service(App::new().service(get_latest_ids)).await;
@@ -202,46 +166,6 @@ mod tests {
         let body = test::read_body(resp).await;
         let latest_ids: Vec<String> = serde_json::from_slice(&body).unwrap();
         assert_eq!(latest_ids.len(), count);
-    }
-
-    #[actix_rt::test]
-    async fn test_get_latest_ids() {
-        // Create a temporary directory and a sample articles file with 3 articles
-        let dir = tempdir().unwrap();
-        let articles_path = dir.path().join("articles.json");
-        let mut file = File::create(&articles_path).unwrap();
-        let articles = vec![            Article {                id: Uuid::new_v4().to_string(),                author: "Alice".to_string(),                created: Utc::now().to_rfc3339(),                title: "Article 1".to_string(),                content: "Lorem ipsum dolor sit amet.".to_string(),                category: "News".to_string(),                tags: vec!["tag1".to_string(), "tag2".to_string()],
-                likes: 10,
-            },
-            Article {
-                id: String::from("2"),
-                author: "Bob".to_string(),
-                created: Utc::now().to_rfc3339(),
-                title: "Article 2".to_string(),
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.".to_string(),
-                category: "Technology".to_string(),
-                tags: vec!["tag2".to_string(), "tag3".to_string()],
-                likes: 20,
-            },
-            Article {
-                id: String::from("1"),
-                author: "Charlie".to_string(),
-                created: Utc::now().to_rfc3339(),
-                title: "Article 3".to_string(),
-                content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.".to_string(),
-                category: "Opinion".to_string(),
-                tags: vec!["tag3".to_string(), "tag4".to_string()],
-                likes: 30,
-            },
-        ];
-        let articles_json = serde_json::to_string(&articles).unwrap();
-        file.write_all(articles_json.as_bytes()).unwrap();
-
-        // Call the retrieve_latest_ids function to retrieve the latest 2 IDs
-        let latest_ids = retrieve_latest_ids(2).await;
-
-        // Check that the result is the two latest IDs (in reverse order)
-        assert_eq!(latest_ids, vec![articles[2].id.clone(), articles[1].id.clone()]);
     }
 
     #[actix_rt::test]

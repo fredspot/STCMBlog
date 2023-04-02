@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
-import { withRouter } from 'react-router-dom';
+import React, { useState, useContext, useEffect} from 'react';
+import { useNavigate  } from 'react-router-dom';
+import { AuthContext } from './AuthProvider';
 
 const CreateArticle = (props) => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [tags, setTags] = useState('');
-  const [category, setCategory] = useState('Investing'); // Set the default category to Investing
+  const [category, setCategory] = useState('Investing');
+
+  const { isLoggedIn, username} = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,18 +21,24 @@ const CreateArticle = (props) => {
       body: JSON.stringify({
         title,
         content,
-        author: "Your Author Name", // Add this line
-        category, // Add this line
-        tags: tags.split(',').map((tag) => tag.trim()).join(','), // Convert the tags to a comma-separated string
-        likes: 0, // Add this line
+        author: username, // Use authContext.username instead
+        category,
+        tags: tags.split(',').map((tag) => tag.trim()).join(','),
+        likes: 0,
       }),
     });
-  
+
     if (response.ok) {
-      props.history.push('/');
+      navigate('/'); // Replace props.history.push with navigate
     }
   };
-  
+
+  useEffect(() => {
+    if (!isLoggedIn) { // Use authContext.isLoggedIn instead
+      navigate('/login');
+    }
+  }, [isLoggedIn, navigate]);
+
   return (
     <div className="container">
       <div className="row justify-content-center">

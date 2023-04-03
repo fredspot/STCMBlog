@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react'; // Add useRef to imports
 import { withRouter, useNavigate  } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { AuthContext } from './AuthProvider';
@@ -7,6 +7,8 @@ const Article = ({ id, history }) => {
   const [article, setArticle] = useState(null);
   const { username } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef();
 
   useEffect(() => {
     const fetchArticle = async () => {
@@ -28,6 +30,20 @@ const Article = ({ id, history }) => {
     navigate('/');
   };
 
+  // Add the following useEffect
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   if (!article) {
     return <div>Loading...</div>;
   }
@@ -43,12 +59,17 @@ const Article = ({ id, history }) => {
             <div key={index} style={{ fontSize: '14px', backgroundColor: '#f3f3f3', borderRadius: '4px', padding: '4px 8px', marginRight: '6px' }}>{tag}</div>
           ))}
         </div>
-        {article.author === username && (
-          <div>
-            <button onClick={handleEdit}>Edit</button>
-            <button onClick={handleDelete}>Delete</button>
+        <div className="dropdown-container">
+          <div className="dropdown" ref={dropdownRef}>
+            <button className="dropdown-button" onClick={() => setShowDropdown(!showDropdown)}>⋮</button>
+            {showDropdown && (
+              <div className="dropdown-content">
+                <button onClick={handleEdit}>Edit</button>
+                <button onClick={handleDelete}>Delete</button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
         <hr style={{ marginBottom: '20px' }} />
         <ReactMarkdown
           components={{
@@ -64,14 +85,6 @@ const Article = ({ id, history }) => {
             {article.content}
           </ReactMarkdown>
           <hr style={{ marginTop: '40px', marginBottom: '40px' }} />
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #e0e0e0', paddingTop: '20px' }}>
-            <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-              <div style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }}>{article.category}</div>
-              {article.tags.map((tag, index) => (
-                <div key={index} style={{ fontSize: '14px', backgroundColor: '#f3f3f3', borderRadius: '4px', padding: '4px 8px', marginRight: '6px' }}>{tag}</div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     );

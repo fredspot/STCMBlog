@@ -41,13 +41,13 @@ const NavBar = () => {
           <div className="menu-dropdown">
             <ul className="navbar-nav">
               <li className="nav-item">
-                <NavLink className="nav-link" to="#" exact>
-                  Link
+              <NavLink className="nav-link" to="/create-article" exact>
+                  Create Article
                 </NavLink>
               </li>
               <li className="nav-item">
-                <NavLink className="nav-link" to="/create-article" exact>
-                  Create Article
+                <NavLink className="nav-link" to="/about" exact>
+                  About
                 </NavLink>
               </li>
               <li className="nav-item">

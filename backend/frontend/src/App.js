@@ -5,6 +5,7 @@ import CreateArticle from './CreateArticle';
 import EditArticle from './EditArticle';
 import NavBar from './NavBar';
 import Login from './Login';
+import About from './About';
 import { useParams } from 'react-router-dom';
 
 const App = () => {
@@ -39,6 +40,7 @@ const App = () => {
           <Route path="/create-article" element={<CreateArticle />} />
           <Route path="/edit-article/:id" element={<EditArticleWrapper />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<About />} />
         </Routes>
         </div>
       </div>

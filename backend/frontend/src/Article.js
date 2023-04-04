@@ -60,15 +60,17 @@ const Article = ({ id, history }) => {
           ))}
         </div>
         <div className="dropdown-container">
-          <div className="dropdown" ref={dropdownRef}>
-            <button className="dropdown-button" onClick={() => setShowDropdown(!showDropdown)}>⋮</button>
-            {showDropdown && (
-              <div className="dropdown-content">
-                <button onClick={handleEdit}>Edit</button>
-                <button onClick={handleDelete}>Delete</button>
-              </div>
-            )}
-          </div>
+          {username && article.author === username && (
+            <div className="dropdown" ref={dropdownRef}>
+              <button className="dropdown-button" onClick={() => setShowDropdown(!showDropdown)}>⋮</button>
+              {showDropdown && (
+                <div className="dropdown-content">
+                  <button onClick={handleEdit}>Edit</button>
+                  <button onClick={handleDelete}>Delete</button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <hr style={{ marginBottom: '20px' }} />
         <ReactMarkdown
@@ -80,6 +82,7 @@ const Article = ({ id, history }) => {
             h4: ({ children }) => <h4 style={{ fontWeight: 'bold', fontSize: '24px', lineHeight: '28px', marginBottom: '20px' }}>{children}</h4>,
             h5: ({ children }) => <h5 style={{ fontWeight: 'bold', fontSize: '20px', lineHeight: '24px', marginBottom: '20px' }}>{children}</h5>,
             h6: ({ children }) => <h6 style={{ fontWeight: 'bold', fontSize: '16px', lineHeight: '20px', marginBottom: '20px' }}>{children}</h6>,
+            img: ({ node, ...props }) => <img {...props} style={{ maxWidth: '100%', height: 'auto' }} />,
           }}
           >
             {article.content}

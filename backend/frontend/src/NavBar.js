@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from './AuthProvider';
+import Search from './Search';
 
 const NavBar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const { isLoggedIn, setIsLoggedIn} = useContext(AuthContext);
-  
+  const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   useEffect(() => {
     const closeMenu = () => {
       setMenuOpen(false);
@@ -32,6 +34,7 @@ const NavBar = () => {
         <NavLink className="navbar-brand" to="/">
           <img src="logo.png" alt="Logo" className="d-inline-block align-text-top me-2" />
         </NavLink>
+        <Search />
         <div className="menu-container" onClick={() => setMenuOpen(!menuOpen)}>
           <div className="menu-dot"></div>
           <div className="menu-dot"></div>
@@ -41,7 +44,7 @@ const NavBar = () => {
           <div className="menu-dropdown">
             <ul className="navbar-nav">
               <li className="nav-item">
-              <NavLink className="nav-link" to="/create-article" exact>
+                <NavLink className="nav-link" to="/create-article" exact>
                   Create Article
                 </NavLink>
               </li>
@@ -66,7 +69,7 @@ const NavBar = () => {
         )}
       </div>
     </nav>
-  );  
+  );
 };
 
 export default NavBar;

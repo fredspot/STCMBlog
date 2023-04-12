@@ -45,7 +45,7 @@ const Article = ({ id, history }) => {
   }, []);
 
   if (!article) {
-    return <div>Loading...</div>;
+    return <div></div>;
   }
 
   return (

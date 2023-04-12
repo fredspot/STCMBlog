@@ -25,6 +25,60 @@ pub struct LatestParams {
     count: Option<usize>,
 }
 
+#[derive(Deserialize)]
+pub struct SearchParams {
+    q: String,
+}
+
+pub async fn search_articles_test(web::Query(params): web::Query<SearchParams>) -> HttpResponse {
+    let query = params.q.to_lowercase();
+
+    // Retrieve all articles
+    let articles = read_articles_from_file().await;
+
+    // Filter articles based on the search query
+    let filtered_articles: Vec<Article> = articles
+        .into_iter()
+        .filter(|article| {
+            article.title.to_lowercase().contains(&query)
+                || article.content.to_lowercase().contains(&query)
+                || article.category.to_lowercase().contains(&query)
+                || article.tags.as_ref().map_or(false, |tags| {
+                    tags.iter()
+                        .any(|tag| tag.to_lowercase().contains(&query))
+                })
+        })
+        .collect();
+
+    // Return filtered articles as JSON
+    HttpResponse::Ok().json(filtered_articles)
+}
+
+#[get("/api/search")]
+pub async fn search_articles(web::Query(params): web::Query<SearchParams>) -> HttpResponse {
+    let query = params.q.to_lowercase();
+
+    // Retrieve all articles
+    let articles = read_articles_from_file().await;
+
+    // Filter articles based on the search query
+    let filtered_articles: Vec<Article> = articles
+        .into_iter()
+        .filter(|article| {
+            article.title.to_lowercase().contains(&query)
+                || article.content.to_lowercase().contains(&query)
+                || article.category.to_lowercase().contains(&query)
+                || article.tags.as_ref().map_or(false, |tags| {
+                    tags.iter()
+                        .any(|tag| tag.to_lowercase().contains(&query))
+                })
+        })
+        .collect();
+
+    // Return filtered articles as JSON
+    HttpResponse::Ok().json(filtered_articles)
+}
+
 #[delete("/api/articles/{id}")]
 pub async fn delete_article(path_id: web::Path<String>) -> HttpResponse {
     let id = path_id.into_inner();
@@ -192,6 +246,26 @@ mod tests {
     use chrono::Utc;
     use tempfile::tempdir;
     use actix_web::test::{init_service, TestRequest};
+    use actix_rt;
+    use actix_web::dev::ServiceResponse;
+
+    #[actix_rt::test]
+    async fn test_search_articles() {
+        let mut app = test::init_service(App::new().service(search_articles)).await;
+
+        let req = TestRequest::get().uri("/api/articles/search?q=test").to_request();
+        println!("{:?}", req);
+
+        let res: ServiceResponse = test::call_service(&mut app, req).await;
+        let response = res.response().clone();
+
+        // Print the status code and response body
+        println!("Status Code: {:?}", response.status());
+        let body = test::read_body(res).await;
+        println!("Response Body: {:?}", std::str::from_utf8(&body));
+
+        assert_eq!(response.status(), 200);
+    }
 
     #[actix_rt::test]
     async fn test_get_latest_ids_api() {

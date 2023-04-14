@@ -28,6 +28,7 @@ async fn main() -> std::io::Result<()> {
             .service(article::update_article)
             .service(article::delete_article)
             .service(article::search_articles)
+            .service(article::get_tags)
             .service(login::login)
             // Add the temporary endpoint
             //.service(web::resource("/api/temp_search").route(web::get().to(article::search_articles_test)))

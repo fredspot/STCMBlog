@@ -32,7 +32,7 @@ const NavBar = () => {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark large-navbar">
       <div className="container-fluid">
         <NavLink className="navbar-brand" to="/">
-          <img src="logo.png" alt="Logo" className="d-inline-block align-text-top me-2" />
+          <img src="/logo.png" alt="Logo" className="d-inline-block align-text-top me-2" />
         </NavLink>
         <Search />
         <div className="menu-container" onClick={() => setMenuOpen(!menuOpen)}>

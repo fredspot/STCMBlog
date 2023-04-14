@@ -7,6 +7,7 @@ use std::io::prelude::*;
 use uuid::Uuid; // Create id of the article
 use serde_json::json;
 use serde_json::Value;
+use std::collections::HashSet;
 
 // Article Struct
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -30,28 +31,29 @@ pub struct SearchParams {
     q: String,
 }
 
-pub async fn search_articles_test(web::Query(params): web::Query<SearchParams>) -> HttpResponse {
-    let query = params.q.to_lowercase();
+#[derive(Deserialize)]
+pub struct QueryParams {
+    tag: Option<String>,
+}
 
-    // Retrieve all articles
+#[get("/api/tags")]
+pub async fn get_tags() -> HttpResponse {
+    // Retrieve Article List from Local File System
     let articles = read_articles_from_file().await;
 
-    // Filter articles based on the search query
-    let filtered_articles: Vec<Article> = articles
-        .into_iter()
-        .filter(|article| {
-            article.title.to_lowercase().contains(&query)
-                || article.content.to_lowercase().contains(&query)
-                || article.category.to_lowercase().contains(&query)
-                || article.tags.as_ref().map_or(false, |tags| {
-                    tags.iter()
-                        .any(|tag| tag.to_lowercase().contains(&query))
-                })
-        })
-        .collect();
+    // Retrieve unique tags from the articles
+    let mut tags = HashSet::new();
+    for article in articles {
+        if let Some(article_tags) = article.tags {
+            for tag in article_tags {
+                tags.insert(tag);
+            }
+        }
+    }
 
-    // Return filtered articles as JSON
-    HttpResponse::Ok().json(filtered_articles)
+    // Convert HashSet to Vec and return as JSON
+    let tags_vec: Vec<String> = tags.into_iter().collect();
+    HttpResponse::Ok().json(tags_vec)
 }
 
 #[get("/api/search")]
@@ -173,9 +175,23 @@ pub async fn get_latest_ids(web::Query(params): web::Query<LatestParams>) -> Htt
 }
 
 #[get("/api/articles")]
-pub async fn get_articles() -> HttpResponse {
+pub async fn get_articles(query_params: web::Query<QueryParams>) -> HttpResponse {
     // Retrieve Article List from Local File System
-    let articles = read_articles_from_file().await;
+    let mut articles = read_articles_from_file().await;
+
+    // Filter articles by the provided tag if it exists
+    if let Some(ref tag) = query_params.tag {
+        articles = articles
+            .into_iter()
+            .filter(|article| {
+                if let Some(ref tags) = article.tags {
+                    tags.contains(tag)
+                } else {
+                    false
+                }
+            })
+            .collect();
+    }
 
     // Return Article List as JSON
     HttpResponse::Ok().json(articles)

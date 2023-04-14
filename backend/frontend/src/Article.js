@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react'; // Add u
 import { withRouter, useNavigate  } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { AuthContext } from './AuthProvider';
+import ShareButton from './ShareButton';
 
 const Article = ({ id, history }) => {
   const [article, setArticle] = useState(null);
@@ -53,11 +54,14 @@ const Article = ({ id, history }) => {
       <div style={{ maxWidth: '740px', width: '100%', padding: '40px 20px' }}>
         <h1 style={{ fontWeight: 'bold', fontSize: '48px', lineHeight: '56px', marginBottom: '10px' }}>{article.title}</h1>
         <p style={{ fontSize: '18px', lineHeight: '24px', color: 'gray', marginBottom: '20px' }}>Written by {article.author} on {article.created.substring(0, 10)}</p>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', marginBottom: '10px' }}>
-          <div style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }}>{article.category}</div>
-          {article.tags.map((tag, index) => (
-            <div key={index} style={{ fontSize: '14px', backgroundColor: '#f3f3f3', borderRadius: '4px', padding: '4px 8px', marginRight: '6px' }}>{tag}</div>
-          ))}
+        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <div style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }}>{article.category}</div>
+            {article.tags.map((tag, index) => (
+              <div key={index} style={{ fontSize: '14px', backgroundColor: '#f3f3f3', borderRadius: '4px', padding: '4px 8px', marginRight: '6px' }}>{tag}</div>
+            ))}
+          </div>
+          <ShareButton id={id} />
         </div>
         <div className="dropdown-container">
           {username && article.author === username && (

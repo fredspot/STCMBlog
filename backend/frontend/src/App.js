@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import Article from './Article';
 import CreateArticle from './CreateArticle';
 import EditArticle from './EditArticle';
@@ -13,6 +13,7 @@ import { useParams } from 'react-router-dom';
 const App = () => {
   const [latestIds, setLatestIds] = useState([]);
   const [filteredArticles, setFilteredArticles] = useState([]);
+  const location = useLocation();
   const ArticleWrapper = () => {
     const { id } = useParams();
     return <Article id={id} />;
@@ -82,14 +83,16 @@ const App = () => {
               <Route path="/search" element={<Search />} />
             </Routes>
           </div>
-          <div
-            className="tags-filter"
-            style={{
-              marginLeft: '20px',
-            }}
-          >
-            <TagsFilter onTagClick={handleTagClick} />
-          </div>
+          {location.pathname === '/' && (
+            <div
+              className="tags-filter"
+              style={{
+                marginLeft: '20px',
+              }}
+            >
+              <TagsFilter onTagClick={handleTagClick} />
+            </div>
+          )}
         </div>
       </div>
     </>

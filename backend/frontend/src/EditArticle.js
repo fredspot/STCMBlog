@@ -14,7 +14,7 @@ const EditArticle = ({ id }) => {
 
   useEffect(() => {
     const fetchArticle = async () => {
-      const response = await fetch(`http://localhost:8080/api/articles/${id}`);
+      const response = await fetch(`/api/articles/${id}`);
       const data = await response.json();
 
       setTitle(data.title);
@@ -29,7 +29,7 @@ const EditArticle = ({ id }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch(`http://localhost:8080/api/articles/${id}`, {
+    const response = await fetch(`/api/articles/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

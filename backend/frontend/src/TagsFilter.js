@@ -5,7 +5,7 @@ const TagsFilter = ({ onTagClick }) => {
   const [activeTag, setActiveTag] = useState(null);
 
   const fetchTags = async () => {
-    const response = await fetch('http://localhost:8080/api/tags');
+    const response = await fetch('/api/tags');
     const data = await response.json();
     setTags(data);
   };

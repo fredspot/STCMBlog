@@ -13,7 +13,7 @@ const Article = ({ id, history }) => {
 
   useEffect(() => {
     const fetchArticle = async () => {
-      const response = await fetch(`http://localhost:8080/api/articles/${id}`);
+      const response = await fetch(`/api/articles/${id}`);
       const data = await response.json();
       setArticle(data);
     };
@@ -25,7 +25,7 @@ const Article = ({ id, history }) => {
   };
 
   const handleDelete = async () => {
-    await fetch(`http://localhost:8080/api/articles/${id}`, {
+    await fetch(`/api/articles/${id}`, {
       method: 'DELETE',
     });
     navigate('/');

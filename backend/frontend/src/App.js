@@ -25,7 +25,7 @@ const App = () => {
   };
 
   const handleTagClick = async (tag) => {
-    const response = await fetch(`http://localhost:8080/api/articles?tag=${tag}`);
+    const response = await fetch(`/api/articles?tag=${tag}`);
     const data = await response.json();
     setFilteredArticles(data.map(article => article.id)); // Extract the article IDs from the fetched data
   };
@@ -33,7 +33,7 @@ const App = () => {
 
   useEffect(() => {
     const fetchLatestIds = async () => {
-      const response = await fetch('http://localhost:8080/api/articles/latest?count=10');
+      const response = await fetch('/api/articles/latest?count=10');
       const data = await response.json();
       setLatestIds(data);
     };

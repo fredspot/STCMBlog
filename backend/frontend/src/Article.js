@@ -63,14 +63,88 @@ const Article = ({ id, history }) => {
           </div>
           <ShareButton id={id} />
         </div>
-        <div className="dropdown-container">
+        <div
+          className="dropdown-container"
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            marginBottom: "20px",
+          }}
+        >
           {username && article.author === username && (
-            <div className="dropdown" ref={dropdownRef}>
-              <button className="dropdown-button" onClick={() => setShowDropdown(!showDropdown)}>⋮</button>
+            <div
+              className="dropdown"
+              ref={dropdownRef}
+              style={{
+                position: "relative",
+                display: "inline-block",
+              }}
+            >
+              <button
+                className="dropdown-button"
+                onClick={() => setShowDropdown(!showDropdown)}
+                style={{
+                  background: "none",
+                  border: "none",
+                  fontSize: "24px",
+                  cursor: "pointer",
+                }}
+              >
+                ⋮
+              </button>
               {showDropdown && (
-                <div className="dropdown-content">
-                  <button onClick={handleEdit}>Edit</button>
-                  <button onClick={handleDelete}>Delete</button>
+                <div
+                  className="dropdown-content"
+                  style={{
+                    display: "none",
+                    position: "absolute",
+                    right: 0,
+                    backgroundColor: "#f9f9f9",
+                    minWidth: "160px",
+                    boxShadow: "0px 8px 16px 0px rgba(0, 0, 0, 0.2)",
+                    zIndex: 1,
+                  }}
+                  onMouseEnter={(e) => (e.target.style.display = "block")}
+                  onMouseLeave={(e) => (e.target.style.display = "none")}
+                >
+                  <button
+                    onClick={handleEdit}
+                    style={{
+                      color: "black",
+                      padding: "12px 16px",
+                      textDecoration: "none",
+                      display: "block",
+                      textAlign: "left",
+                      fontSize: "16px",
+                      border: "none",
+                      backgroundColor: "transparent",
+                      width: "100%",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#f1f1f1")}
+                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    style={{
+                      color: "black",
+                      padding: "12px 16px",
+                      textDecoration: "none",
+                      display: "block",
+                      textAlign: "left",
+                      fontSize: "16px",
+                      border: "none",
+                      backgroundColor: "transparent",
+                      width: "100%",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#f1f1f1")}
+                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
+                  >
+                    Delete
+                  </button>
                 </div>
               )}
             </div>

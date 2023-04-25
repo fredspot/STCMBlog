@@ -13,7 +13,7 @@ const Article = ({ id, history }) => {
 
   useEffect(() => {
     const fetchArticle = async () => {
-      const response = await fetch(`/api/articles/${id}`);
+      const response = await fetch(`http://localhost:8080/api/articles/${id}`); //`/api/articles/${id}`
       const data = await response.json();
       setArticle(data);
     };
@@ -25,7 +25,7 @@ const Article = ({ id, history }) => {
   };
 
   const handleDelete = async () => {
-    await fetch(`/api/articles/${id}`, {
+    await fetch(`http://localhost:8080/api/articles/${id}`, { //`/api/articles/${id}`
       method: 'DELETE',
     });
     navigate('/');
@@ -50,125 +50,276 @@ const Article = ({ id, history }) => {
   }
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <div style={{ maxWidth: '740px', width: '100%', padding: '40px 20px' }}>
-        <h1 style={{ fontWeight: 'bold', fontSize: '48px', lineHeight: '56px', marginBottom: '10px' }}>{article.title}</h1>
-        <p style={{ fontSize: '18px', lineHeight: '24px', color: 'gray', marginBottom: '20px' }}>Written by {article.author} on {article.created.substring(0, 10)}</p>
-        <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-          <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-            <div style={{ fontWeight: 'bold', fontSize: '16px', marginRight: '10px' }}>{article.category}</div>
-            {article.tags.map((tag, index) => (
-              <div key={index} style={{ fontSize: '14px', backgroundColor: '#f3f3f3', borderRadius: '4px', padding: '4px 8px', marginRight: '6px' }}>{tag}</div>
-            ))}
-          </div>
-          <ShareButton id={id} />
-        </div>
-        <div
-          className="dropdown-container"
+    <div style={{ display: "flex", justifyContent: "center" }}>
+      <div style={{ maxWidth: "740px", width: "100%", padding: "40px 20px" }}>
+        <h1
           style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: "20px",
+            fontWeight: "bold",
+            fontSize: "48px",
+            lineHeight: "56px",
+            marginBottom: "10px",
           }}
         >
-          {username && article.author === username && (
-            <div
-              className="dropdown"
-              ref={dropdownRef}
-              style={{
-                position: "relative",
-                display: "inline-block",
-              }}
-            >
-              <button
-                className="dropdown-button"
-                onClick={() => setShowDropdown(!showDropdown)}
+          {article.title}
+        </h1>
+        <div style={{ display: "flex", justifyContent: "space-between" }}>
+          <p
+            style={{
+              fontSize: "18px",
+              lineHeight: "24px",
+              color: "gray",
+              marginBottom: "20px",
+            }}
+          >
+            Written by {article.author} on {article.created.substring(0, 10)}
+          </p>
+          <div
+            className="dropdown-container"
+            style={{
+              display: "flex",
+              justifyContent: "flex-end",
+              marginBottom: "20px",
+            }}
+          >
+            {username && article.author === username && (
+              <div
+                className="dropdown"
+                ref={dropdownRef}
                 style={{
-                  background: "none",
-                  border: "none",
-                  fontSize: "24px",
-                  cursor: "pointer",
+                  position: "relative",
+                  display: "inline-block",
                 }}
               >
-                ⋮
-              </button>
-              {showDropdown && (
-                <div
-                  className="dropdown-content"
+                <button
+                  className="dropdown-button"
+                  onClick={() => setShowDropdown(!showDropdown)}
                   style={{
-                    display: "none",
-                    position: "absolute",
-                    right: 0,
-                    backgroundColor: "#f9f9f9",
-                    minWidth: "160px",
-                    boxShadow: "0px 8px 16px 0px rgba(0, 0, 0, 0.2)",
-                    zIndex: 1,
+                    background: "none",
+                    border: "none",
+                    fontSize: "24px",
+                    cursor: "pointer",
                   }}
-                  onMouseEnter={(e) => (e.target.style.display = "block")}
-                  onMouseLeave={(e) => (e.target.style.display = "none")}
                 >
-                  <button
-                    onClick={handleEdit}
+                  ⋮
+                </button>
+                {showDropdown && (
+                  <div
+                    className="dropdown-content"
                     style={{
-                      color: "black",
-                      padding: "12px 16px",
-                      textDecoration: "none",
-                      display: "block",
-                      textAlign: "left",
-                      fontSize: "16px",
-                      border: "none",
-                      backgroundColor: "transparent",
-                      width: "100%",
-                      cursor: "pointer",
+                      position: "absolute",
+                      right: 0,
+                      top: "24px",
+                      backgroundColor: "#f9f9f9",
+                      minWidth: "160px",
+                      boxShadow:
+                        "0px 8px 16px 0px rgba(0, 0, 0, 0.2)",
+                      zIndex: 1,
                     }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#f1f1f1")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
+                    onMouseEnter={(e) => (e.target.style.display = "block")}
+                    onMouseLeave={(e) => (e.target.style.display = "none")}
                   >
-                    Edit
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    style={{
-                      color: "black",
-                      padding: "12px 16px",
-                      textDecoration: "none",
-                      display: "block",
-                      textAlign: "left",
-                      fontSize: "16px",
-                      border: "none",
-                      backgroundColor: "transparent",
-                      width: "100%",
-                      cursor: "pointer",
-                    }}
-                    onMouseEnter={(e) => (e.target.style.backgroundColor = "#f1f1f1")}
-                    onMouseLeave={(e) => (e.target.style.backgroundColor = "transparent")}
-                  >
-                    Delete
-                  </button>
+                    <button
+                      onClick={handleEdit}
+                      style={{
+                        color: "black",
+                        padding: "12px 16px",
+                        textDecoration: "none",
+                        display: "block",
+                        textAlign: "left",
+                        fontSize: "16px",
+                        border: "none",
+                        backgroundColor: "transparent",
+                        width: "100%",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.target.style.backgroundColor = "#f1f1f1")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.target.style.backgroundColor = "transparent")
+                      }
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={handleDelete}
+                      style={{
+                        color: "black",
+                        padding: "12px 16px",
+                        textDecoration: "none",
+                        display: "block",
+                        textAlign: "left",
+                        fontSize: "16px",
+                        border: "none",
+                        backgroundColor: "transparent",
+                        width: "100%",
+                        cursor: "pointer",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.target.style.backgroundColor = "#f1f1f1")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.target.style.backgroundColor = "transparent")
+                      }
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
-          )}
-        </div>
-        <hr style={{ marginBottom: '20px' }} />
-        <ReactMarkdown
-          components={{
-            p: ({ children }) => <p style={{ fontSize: '21px', lineHeight: '32px', marginBottom: '20px' }}>{children}</p>,
-            h1: ({ children }) => <h1 style={{ fontWeight: 'bold', fontSize: '36px', lineHeight: '40px', marginBottom: '20px' }}>{children}</h1>,
-            h2: ({ children }) => <h2 style={{ fontWeight: 'bold', fontSize: '32px', lineHeight: '36px', marginBottom: '20px' }}>{children}</h2>,
-            h3: ({ children }) => <h3 style={{ fontWeight: 'bold', fontSize: '28px', lineHeight: '32px', marginBottom: '20px' }}>{children}</h3>,
-            h4: ({ children }) => <h4 style={{ fontWeight: 'bold', fontSize: '24px', lineHeight: '28px', marginBottom: '20px' }}>{children}</h4>,
-            h5: ({ children }) => <h5 style={{ fontWeight: 'bold', fontSize: '20px', lineHeight: '24px', marginBottom: '20px' }}>{children}</h5>,
-            h6: ({ children }) => <h6 style={{ fontWeight: 'bold', fontSize: '16px', lineHeight: '20px', marginBottom: '20px' }}>{children}</h6>,
-            img: ({ node, ...props }) => <img {...props} style={{ maxWidth: '100%', height: 'auto' }} />,
-          }}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "10px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <div
+                style={{
+                  fontWeight: "bold",
+                  fontSize: "16px",
+                  marginRight: "10px",
+                }}
+              >
+                {article.category}
+              </div>
+              {article.tags.map((tag, index) => (
+                <div
+                  key={index}
+                  style={{
+                    fontSize: "14px",
+                    backgroundColor: "#f3f3f3",
+                    borderRadius: "4px",
+                    padding: "4px 8px",
+                    marginRight: "6px",
+                  }}
+                >
+                  {tag}
+                </div>
+              ))}
+            </div>
+            <ShareButton id={id} />
+          </div>
+          <hr style={{ marginBottom: "20px" }} />
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => (
+                <p
+                  style={{
+                    fontSize: "21px",
+                    lineHeight: "32px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {children}
+                </p>
+              ),
+              h1: ({ children }) => (
+                <h1
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "36px",
+                    lineHeight: "40px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {children}
+                </h1>
+              ),
+              h2: ({ children }) => (
+                <h2
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "32px",
+                    lineHeight: "36px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {children}
+                </h2>
+              ),
+              h3: ({ children }) => (
+                <h3
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "28px",
+                    lineHeight: "32px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {children}
+                </h3>
+              ),
+              h4: ({ children }) => (
+                <h4
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "24px",
+                    lineHeight: "28px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {children}
+                </h4>
+              ),
+              h5: ({ children }) => (
+                <h5
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "20px",
+                    lineHeight: "24px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {children}
+                </h5>
+              ),
+              h6: ({ children }) => (
+                <h6
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "16px",
+                    lineHeight: "20px",
+                    marginBottom: "20px",
+                  }}
+                >
+                  {children}
+                </h6>
+              ),
+              img: ({ node, ...props }) => (
+                <img
+                  {...props}
+                  style={{
+                    maxWidth: "100%",
+                    height: "auto",
+                  }}
+                />
+              ),
+            }}
           >
             {article.content}
           </ReactMarkdown>
-          <hr style={{ marginTop: '40px', marginBottom: '40px' }} />
+          <hr
+            style={{
+              marginTop: "40px",
+              marginBottom: "40px",
+            }}
+          />
         </div>
       </div>
-    );
+    );      
   };
   
   export default Article;

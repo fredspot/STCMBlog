@@ -14,7 +14,7 @@ const EditArticle = ({ id }) => {
 
   useEffect(() => {
     const fetchArticle = async () => {
-      const response = await fetch(`http://localhost:8080/api/articles/${id}`); //`/api/articles/${id}`
+      const response = await fetch(`/api/articles/${id}`); //`http://localhost:8080/api/articles/${id}`
       const data = await response.json();
 
       setTitle(data.title);

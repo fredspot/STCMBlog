@@ -25,7 +25,7 @@ const Article = ({ id, history }) => {
   };
 
   const handleDelete = async () => {
-    await fetch(`http://localhost:8080/api/articles/${id}`, { //`/api/articles/${id}`
+    await fetch(`/api/articles/${id}`, { //`http://localhost:8080/api/articles/${id}`
       method: 'DELETE',
     });
     navigate('/');

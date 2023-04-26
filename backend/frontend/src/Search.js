@@ -13,7 +13,7 @@ const Search = () => {
 
   const searchArticles = async (query) => {
     if (query) {
-      const response = await fetch(`http://localhost:8080/api/search?q=${query}`); //`/api/search?q=${query}`
+      const response = await fetch(`/api/search?q=${query}`); //`http://localhost:8080/api/search?q=${query}`
       const data = await response.json();
       setArticles(data);
     } else {

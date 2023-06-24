@@ -1,6 +1,11 @@
+events {
+    worker_connections 1024; # Adjust this value based on your server's capacity
+}
+
 http {
     server {
         listen 80;
+        server_name stcmvue.com www.stcmvue.com;         
 
         location / {
             root /home/stcm/stcm/STCMBlog/backend/frontend/build;
